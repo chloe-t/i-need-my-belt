@@ -27,4 +27,6 @@ export GITLAB_HOME=/srv/gitlab
 
 printenv GITLAB_HOME
 
+cp /tmp/files/docker-compose.yml .
+
 sudo docker compose up -d

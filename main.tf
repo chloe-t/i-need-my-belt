@@ -41,7 +41,7 @@ resource "google_compute_instance" "default" {
 
   provisioner "file" {
     source      = "./docker-compose.yml"
-    destination = "/docker-compose.yml"
+    destination = "/tmp/files/docker-compose.yml"
   }
 
   metadata_startup_script = file("./install_docker.sh")
