@@ -18,7 +18,7 @@ terraform {
 }
 
 variable "GOOGLE_APPLICATION_CREDENTIALS" {
-  type = string
+  type    = string
   default = ""
 }
 
