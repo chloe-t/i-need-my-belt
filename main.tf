@@ -16,9 +16,6 @@ terraform {
     }
   }
 }
-variable "GOOGLE_APPLICATION_CREDENTIALS" {
-  type = string
-}
 
 # An example resource that does nothing.
 resource "google_compute_instance" "default" {
