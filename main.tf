@@ -36,6 +36,7 @@ resource "google_compute_instance" "default" {
 
   service_account {
     email = "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+    scopes = [ "cloud-platform", "default" ]
   }
 
   metadata_startup_script = file("./install_docker.sh")
