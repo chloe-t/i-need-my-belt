@@ -40,6 +40,11 @@ resource "google_compute_instance" "default" {
   }
 
   metadata_startup_script = file("./install_docker.sh")
+
+  provisioner "file" {
+    source      = "./docker-compose.yml"
+    destination = "/docker-compose.yml"
+  }
 }
 
 resource "google_compute_firewall" "default" {
