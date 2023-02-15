@@ -39,12 +39,12 @@ resource "google_compute_instance" "default" {
     scopes = ["cloud-platform"]
   }
 
-  metadata_startup_script = file("./install_docker.sh")
-
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/docker-compose.yml"
   }
+
+  metadata_startup_script = file("./install_docker.sh")
 }
 
 resource "google_compute_firewall" "default" {
