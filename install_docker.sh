@@ -25,6 +25,6 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plu
 
 export GITLAB_HOME=/srv/gitlab
 
-docker compose up -d
+printenv GITLAB_HOME
 
-
+sudo docker compose up -d

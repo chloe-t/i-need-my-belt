@@ -33,7 +33,15 @@ resource "google_compute_instance" "default" {
     network = "default"
     access_config {}
   }
-  metadata_startup_script = file("./install_docker.sh")
+
+  metadata = {
+    startup-script-url = file("./install_docker.sh")
+  }
+  
+  scheduling {
+    preemptible       = true
+    automatic_restart = false
+  }
 }
 
 resource "google_compute_firewall" "default" {
