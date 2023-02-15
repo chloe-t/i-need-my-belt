@@ -34,9 +34,11 @@ resource "google_compute_instance" "default" {
     access_config {}
   }
 
-  metadata = {
-    startup-script-url = file("./install_docker.sh")
+  service_account {
+    email = "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
   }
+
+  metadata_startup_script = file("./install_docker.sh")
 }
 
 resource "google_compute_firewall" "default" {
