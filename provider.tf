@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file(env.credentials_json)
+  credentials = file(env.GOOGLE_APPLICATION_CREDENTIALS)
   project     = "i-need-my-belt"
   region      = "us-west1"
 }
