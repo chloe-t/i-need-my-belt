@@ -37,7 +37,6 @@ resource "google_compute_instance" "default" {
   metadata = {
     startup-script-url = file("./install_docker.sh")
   }
-  
   scheduling {
     preemptible       = true
     automatic_restart = false
