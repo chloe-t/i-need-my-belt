@@ -17,8 +17,6 @@ terraform {
   }
 }
 
-variable "GOOGLE_APPLICATION_CREDENTIALS" {}
-
 # An example resource that does nothing.
 resource "google_compute_instance" "default" {
   name         = "i-need-my-belt-gitlab-instance"
