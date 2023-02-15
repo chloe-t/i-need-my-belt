@@ -68,6 +68,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    # Authenticate to Google Cloud for Terraform to access it
+    - name: 'Authenticate to Google Cloud'
+    	id: auth
+    	uses: google-github-actions/auth@v0
+    	with:
+      	credentials_json: ${{secrets.GCP_SA_KEY}}
+
+    
+    - name: 'Storing SA Key to json file'
+    	id: sa-config
+    	run: |
+      	echo ${{ secrets.GCP_SA_KEY }} | base64 -d > credentials.json
+    	shell: bash
+
+
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
