@@ -72,7 +72,9 @@ jobs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: ${{secrets.GCP_SA_KEY}}
+        workload_identity_provider: "projects/325131041831/locations/global/workloadIdentityPools/project-pool/"
+        service_account: "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+    #    credentials_json: ${{secrets.GCP_SA_KEY}}
 
     # - name: Storing SA Key to json file
     #   run: echo ${{ secrets.GCP_SA_KEY }} | base64 -d > credentials.json
