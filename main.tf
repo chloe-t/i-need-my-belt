@@ -1,11 +1,11 @@
 
 terraform {
-    required_providers {
-      google = {
-        source = "hashicorp/google"
-      }
+  required_providers {
+    google = {
+      source = "hashicorp/google"
     }
-    
+  }
+
   backend "remote" {
     # The name of your Terraform Cloud organization.
     organization = "i-need-my-belt"
