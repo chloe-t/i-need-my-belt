@@ -42,12 +42,12 @@ resource "google_compute_instance" "default" {
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/tmp/files/docker-compose.yml"
-    connection {
-      type = "ssh"
-      user = "ubuntu"
-      host = self.hostname
-      private_key = "${file("~/.ssh/google_compute_engine")}"
-    }
+    # connection {
+    #   type = "ssh"
+    #   user = "ubuntu"
+    #   host = self.hostname
+    #   private_key = "${file("~/.ssh/google_compute_engine")}"
+    # }
   }
 
   metadata_startup_script = file("./install_docker.sh")
