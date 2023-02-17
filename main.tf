@@ -71,16 +71,19 @@ resource "google_compute_instance" "default" {
 
   metadata = {
     #ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
-    ssh-keys = "ubuntu:${file("ubuntu.pub")}"
+    #ssh-keys = "ubuntu:${file("ubuntu.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
   }
 
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/tmp/files/docker-compose.yml"
     connection {
-      type = "ssh"
-      user = var.gce_ssh_user
-      host = self.network_interface.0.access_config.0.nat_ip
+      type    = "ssh"
+      user    = "ubuntu"
+      host    = self.network_interface.0.access_config.0.nat_ip
+      timeout = "500s"
+      private_key = "${file("~/.ssh/authorized_keys")}"
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
