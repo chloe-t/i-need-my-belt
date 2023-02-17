@@ -18,7 +18,7 @@ terraform {
 }
 
 # An example resource that does nothing.
-resource "google_compute_instance" "default" {
+resource "google_compute_instance" "i-need-my-belt-gitlab-instance" {
   name         = "i-need-my-belt-gitlab-instance"
   machine_type = "e2-micro"
   zone         = "us-west1-a"
@@ -45,7 +45,7 @@ resource "google_compute_instance" "default" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      host = self.hostname
+      host = self.network_interface
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
