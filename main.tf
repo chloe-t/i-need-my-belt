@@ -17,7 +17,32 @@ terraform {
   }
 }
 
-# An example resource that does nothing.
+
+resource "google_compute_firewall" "default" {
+  name    = "test-firewall"
+  network = google_compute_network.default.name
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "8080", "1000-2000"]
+  }
+
+  source_tags = ["web"]
+}
+
+resource "google_compute_network" "default" {
+  name = "test-network"
+}
+
+# resource "google_compute_address" "gitlab-static-ip-address" {
+#   name = "gitlab-static-ip-address"
+# }
+
+
 resource "google_compute_instance" "default" {
   name         = "i-need-my-belt-gitlab-instance"
   machine_type = "e2-micro"
@@ -45,30 +70,10 @@ resource "google_compute_instance" "default" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      host = self.network_interface.0
+      host = self.network_interface.0.access_config.0.nat_ip
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
 
   metadata_startup_script = file("./install_docker.sh")
-}
-
-resource "google_compute_firewall" "default" {
-  name    = "test-firewall"
-  network = google_compute_network.default.name
-
-  allow {
-    protocol = "icmp"
-  }
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "8080", "1000-2000"]
-  }
-
-  source_tags = ["web"]
-}
-
-resource "google_compute_network" "default" {
-  name = "test-network"
 }
