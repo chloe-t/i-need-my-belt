@@ -43,7 +43,7 @@ variable "gce_ssh_user" {
 }
 
 variable "gce_ssh_pub_key_file" {
-  default = "id_rsa.pub"
+  default = tls_private_key.ephemeral.public_key_openssh
 }
 
 resource "google_compute_network" "default" {
@@ -97,7 +97,7 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
+    ssh-keys = "${var.gce_ssh_user}:${var.gce_ssh_pub_key_file}"
 
     # ssh-keys          = "ubuntu:${file("ubuntu.pub")}"
     # ssh-keys          = tls_private_key.ephemeral.public_key_openssh
