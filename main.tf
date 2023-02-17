@@ -17,6 +17,12 @@ terraform {
   }
 }
 
+# variable "gce_ssh_user" {}
+# variable "gce_ssh_pub_key_file" {}
+
+resource "google_compute_network" "default" {
+  name = "test-network"
+}
 
 resource "google_compute_firewall" "default" {
   name    = "test-firewall"
@@ -28,15 +34,14 @@ resource "google_compute_firewall" "default" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "8080", "1000-2000"]
+    ports    = ["80", "8080", "22" ,"1000-2000"]
   }
 
   source_tags = ["web"]
+  source_ranges = [ "0.0.0.0/0" ]
 }
 
-resource "google_compute_network" "default" {
-  name = "test-network"
-}
+
 
 # resource "google_compute_address" "gitlab-static-ip-address" {
 #   name = "gitlab-static-ip-address"
@@ -64,16 +69,22 @@ resource "google_compute_instance" "default" {
     scopes = ["cloud-platform"]
   }
 
+  metadata = {
+    #ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
+    ssh-keys = "ubuntu:${file("ubuntu.pub")}"
+  }
+
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/tmp/files/docker-compose.yml"
     connection {
       type = "ssh"
-      user = "ubuntu"
+      user = var.gce_ssh_user
       host = self.network_interface.0.access_config.0.nat_ip
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
+  
 
   metadata_startup_script = file("./install_docker.sh")
 }
