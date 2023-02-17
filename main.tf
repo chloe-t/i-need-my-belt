@@ -72,7 +72,7 @@ resource "google_compute_instance" "default" {
   metadata = {
     #ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
     #ssh-keys = "ubuntu:${file("ubuntu.pub")}"
-    ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "ubuntu:${file("ubuntu.pub")}"
   }
 
   provisioner "file" {
@@ -83,7 +83,7 @@ resource "google_compute_instance" "default" {
       user    = "ubuntu"
       host    = self.network_interface.0.access_config.0.nat_ip
       timeout = "500s"
-      private_key = "${file("~/.ssh/authorized_keys")}"
+      #private_key = "${file("~/.ssh/authorized_keys")}"
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
