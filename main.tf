@@ -37,8 +37,14 @@ resource "google_compute_address" "static_ip" {
 output "static_ip" {
   value = google_compute_address.static_ip.address
 }
-# variable "gce_ssh_user" {}
-# variable "gce_ssh_pub_key_file" {}
+
+variable "gce_ssh_user" {
+  default = "ubuntu"
+}
+
+variable "gce_ssh_pub_key_file" {
+  default = "id_rsa.pub"
+}
 
 resource "google_compute_network" "default" {
   name = "test-network"
@@ -67,12 +73,6 @@ resource "google_compute_firewall" "default" {
 }
 
 
-
-# resource "google_compute_address" "gitlab-static-ip-address" {
-#   name = "gitlab-static-ip-address"
-# }
-
-
 resource "google_compute_instance" "default" {
   name         = "i-need-my-belt-gitlab-instance"
   machine_type = "e2-micro"
@@ -97,10 +97,10 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    #ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
-    #ssh-keys = "ubuntu:${file("ubuntu.pub")}"
+    ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
+
     # ssh-keys          = "ubuntu:${file("ubuntu.pub")}"
-    ssh-keys          = tls_private_key.ephemeral.public_key_openssh
+    # ssh-keys          = tls_private_key.ephemeral.public_key_openssh
     enable-oslogin    = "TRUE"
     enable-oslogin-sk = "TRUE"
   }
