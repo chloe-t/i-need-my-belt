@@ -18,7 +18,7 @@ terraform {
 }
 
 # An example resource that does nothing.
-resource "google_compute_instance" "i-need-my-belt-gitlab-instance" {
+resource "google_compute_instance" "default" {
   name         = "i-need-my-belt-gitlab-instance"
   machine_type = "e2-micro"
   zone         = "us-west1-a"
