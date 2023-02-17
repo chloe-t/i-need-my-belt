@@ -30,6 +30,13 @@ resource "google_os_login_ssh_public_key" "default" {
   key  = tls_private_key.ephemeral.public_key_openssh
 }
 
+resource "google_compute_address" "static_ip" {
+  name = "debian-vm"
+}
+
+output "static_ip" {
+  value = google_compute_address.static_ip.address
+}
 # variable "gce_ssh_user" {}
 # variable "gce_ssh_pub_key_file" {}
 
@@ -43,6 +50,11 @@ resource "google_compute_firewall" "default" {
 
   allow {
     protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
   }
 
   allow {
@@ -74,7 +86,9 @@ resource "google_compute_instance" "default" {
 
   network_interface {
     network = "default"
-    access_config {}
+    access_config {
+      nat_ip = google_compute_address.static_ip.address
+    }
   }
 
   service_account {
