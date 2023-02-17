@@ -45,7 +45,7 @@ resource "google_compute_instance" "default" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      host = self.network_interface
+      host = self.network_interface.0
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
