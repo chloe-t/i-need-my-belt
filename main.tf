@@ -26,7 +26,7 @@ resource "tls_private_key" "ephemeral" {
 }
 
 resource "google_os_login_ssh_public_key" "default" {
-  user = data.google_client_openid_userinfo.me.email
+  user = data.google_client_openid_userinfo.terraform_service_account.email
   key  = tls_private_key.ephemeral.public_key_openssh
 }
 
