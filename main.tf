@@ -47,11 +47,11 @@ resource "google_compute_firewall" "default" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "8080", "22" ,"1000-2000"]
+    ports    = ["80", "8080", "22", "1000-2000"]
   }
 
-  source_tags = ["web"]
-  source_ranges = [ "0.0.0.0/0" ]
+  source_tags   = ["web"]
+  source_ranges = ["0.0.0.0/0"]
 }
 
 
@@ -102,7 +102,6 @@ resource "google_compute_instance" "default" {
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
-  
 
   metadata_startup_script = file("./install_docker.sh")
 }
