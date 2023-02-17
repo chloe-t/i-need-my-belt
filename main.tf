@@ -17,6 +17,19 @@ terraform {
   }
 }
 
+data "google_client_openid_userinfo" "terraform_service_account" {
+}
+
+resource "tls_private_key" "ephemeral" {
+  rsa_bits  = 2048
+  algorithm = "RSA"
+}
+
+resource "google_os_login_ssh_public_key" "default" {
+  user = data.google_client_openid_userinfo.me.email
+  key  = tls_private_key.ephemeral.public_key_openssh
+}
+
 # variable "gce_ssh_user" {}
 # variable "gce_ssh_pub_key_file" {}
 
@@ -72,7 +85,9 @@ resource "google_compute_instance" "default" {
   metadata = {
     #ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
     #ssh-keys = "ubuntu:${file("ubuntu.pub")}"
-    ssh-keys = "ubuntu:${file("ubuntu.pub")}"
+    # ssh-keys          = "ubuntu:${file("ubuntu.pub")}"
+    enable-oslogin    = "TRUE"
+    enable-oslogin-sk = "TRUE"
   }
 
   provisioner "file" {
