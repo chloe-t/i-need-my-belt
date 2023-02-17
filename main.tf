@@ -30,20 +30,18 @@ resource "google_os_login_ssh_public_key" "default" {
   key  = tls_private_key.ephemeral.public_key_openssh
 }
 
+resource "google_project_iam_member" "project" {
+  project = "i-need-my-belt"
+  role    = "roles/compute.osAdminLogin"
+  member  = "user:${data.google_client_openid_userinfo.terraform_service_account.email}"
+}
+
 resource "google_compute_address" "static_ip" {
   name = "debian-vm"
 }
 
 output "static_ip" {
   value = google_compute_address.static_ip.address
-}
-
-variable "gce_ssh_user" {
-  default = "ubuntu"
-}
-
-variable "gce_ssh_pub_key_file" {
-  default = tls_private_key.ephemeral.public_key_openssh
 }
 
 resource "google_compute_network" "default" {
@@ -97,7 +95,7 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    ssh-keys = "${var.gce_ssh_user}:${var.gce_ssh_pub_key_file}"
+    # ssh-keys = "${var.gce_ssh_user}:${var.gce_ssh_pub_key_file}"
 
     # ssh-keys          = "ubuntu:${file("ubuntu.pub")}"
     # ssh-keys          = tls_private_key.ephemeral.public_key_openssh
