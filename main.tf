@@ -33,7 +33,7 @@ resource "google_os_login_ssh_public_key" "default" {
 resource "google_project_iam_member" "project" {
   project = "i-need-my-belt"
   role    = "roles/compute.osAdminLogin"
-  member  = "user:${data.google_client_openid_userinfo.terraform_service_account.email}"
+  member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
 }
 
 resource "google_compute_address" "static_ip" {
@@ -90,7 +90,7 @@ resource "google_compute_instance" "default" {
   }
 
   service_account {
-    email  = "serviceAccount:github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+    email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
     scopes = ["cloud-platform"]
   }
 
