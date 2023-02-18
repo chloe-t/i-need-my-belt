@@ -110,7 +110,7 @@ resource "google_compute_instance" "default" {
       type        = "ssh"
       user        = "ubuntu"
       host        = google_compute_address.static_ip.address
-      timeout     = "200s"
+      timeout     = "120s"
       private_key = tls_private_key.ephemeral.private_key_openssh
       # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
