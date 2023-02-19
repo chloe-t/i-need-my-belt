@@ -98,9 +98,9 @@ resource "google_compute_instance" "default" {
     # ssh-keys = "${var.gce_ssh_user}:${var.gce_ssh_pub_key_file}"
 
     # ssh-keys          = "ubuntu:${file("ubuntu.pub")}"
-    # ssh-keys          = tls_private_key.ephemeral.public_key_openssh
-    enable-oslogin    = "TRUE"
-    enable-oslogin-sk = "TRUE"
+    ssh-keys          = tls_private_key.ephemeral.public_key_openssh
+    enable-oslogin    = "FALSE"
+    enable-oslogin-sk = "FALSE"
   }
 
   provisioner "file" {
