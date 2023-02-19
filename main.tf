@@ -108,7 +108,7 @@ resource "google_compute_instance" "default" {
     destination = "/tmp/files/docker-compose.yml"
     connection {
       type        = "ssh"
-      user        = "ubuntu"
+      user        = "chloe_trouilh"
       host        = google_compute_address.static_ip.address
       timeout     = "120s"
       private_key = tls_private_key.ephemeral.private_key_openssh
