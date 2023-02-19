@@ -28,7 +28,7 @@ resource "tls_private_key" "ephemeral" {
 locals {
   ssh_private_key              = tls_private_key.ephemeral.private_key_openssh
   ssh_pub_key                  = tls_private_key.ephemeral.public_key_openssh
-  ssh_pub_key_without_new_line = replace(var.ssh_pub_key, "\n", "")
+  ssh_pub_key_without_new_line = replace(local.ssh_pub_key, "\n", "")
   ssh_user_name                = "ubuntu"
 }
 
