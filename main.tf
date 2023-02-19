@@ -112,7 +112,7 @@ resource "google_compute_instance" "default" {
 
   provisioner "file" {
     source      = "./docker-compose.yml"
-    destination = "/tmp/files/docker-compose.yml"
+    destination = "/tmp/docker-compose.yml"
     connection {
       type        = "ssh"
       user        = "chloe_trouilh"
