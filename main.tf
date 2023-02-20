@@ -99,27 +99,17 @@ resource "google_compute_instance" "default" {
     ssh-keys = "${local.ssh_user_name}:${local.ssh_pub_key_without_new_line} ${local.ssh_user_name}"
   }
 
-  connection {
-    type        = "ssh"
-    user        = local.ssh_user_name # gcp user
-    host        = google_compute_address.static_ip.address
-    timeout     = "500s"
-    private_key = local.ssh_private_key
-  }
-
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/tmp/docker-compose.yml"
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user_name # gcp user
+      host        = google_compute_address.static_ip.address
+      timeout     = "500s"
+      private_key = local.ssh_private_key
+    }
   }
-
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "export GITLAB_HOME=/srv/gitlab",
-  #     "export COMPOSE_PROJECT_NAME=gitlab-instance",
-  #     "cp /tmp/docker-compose.yml .",
-  #     "sudo docker compose up -d"
-  #   ]
-  # }
 
   metadata_startup_script = file("./install_docker.sh")
 }
