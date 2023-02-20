@@ -23,10 +23,9 @@ echo \
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin # <- uncomment to install additional tools
 
-export GITLAB_HOME=/srv/gitlab
-
-printenv GITLAB_HOME
+echo GITLAB_HOME=/srv/gitlab >> /etc/profile
+echo COMPOSE_PROJECT_NAME >> /etc/profile
 
 cp /tmp/docker-compose.yml .
 
-sudo docker compose up -d
+sudo docker compose up -d --no-recreate
