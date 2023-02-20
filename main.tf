@@ -106,7 +106,7 @@ resource "google_compute_instance" "default" {
     timeout     = "120s"
     private_key = local.ssh_private_key
   }
-  
+
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/tmp/docker-compose.yml"
