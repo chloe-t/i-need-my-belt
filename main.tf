@@ -32,11 +32,6 @@ locals {
   ssh_user_name                = "chloe_trouilh"
 }
 
-# resource "google_os_login_ssh_public_key" "default" {
-#   user = data.google_client_openid_userinfo.terraform_service_account.email
-#   key  = tls_private_key.ephemeral.public_key_openssh
-# }
-
 resource "google_project_iam_member" "project" {
   project = "i-need-my-belt"
   role    = "roles/compute.osAdminLogin"
@@ -77,7 +72,6 @@ resource "google_compute_firewall" "default" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-
 resource "google_compute_instance" "default" {
   name         = "i-need-my-belt-gitlab-instance"
   machine_type = "e2-micro"
@@ -102,12 +96,7 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    # ssh-keys = "${var.gce_ssh_user}:${var.gce_ssh_pub_key_file}"
     ssh-keys = "${local.ssh_user_name}:${local.ssh_pub_key_without_new_line} ${local.ssh_user_name}"
-    # ssh-keys          = "ubuntu:${file("ubuntu.pub")}"
-    # ssh-keys          = tls_private_key.ephemeral.public_key_openssh
-    enable-oslogin    = "FALSE"
-    enable-oslogin-sk = "FALSE"
   }
 
   provisioner "file" {
@@ -115,11 +104,10 @@ resource "google_compute_instance" "default" {
     destination = "/tmp/docker-compose.yml"
     connection {
       type        = "ssh"
-      user        = "chloe_trouilh"
+      user        = local.ssh_user_name # gcp user
       host        = google_compute_address.static_ip.address
       timeout     = "120s"
       private_key = local.ssh_private_key
-      # private_key = "${file("~/.ssh/google_compute_engine")}"
     }
   }
 
