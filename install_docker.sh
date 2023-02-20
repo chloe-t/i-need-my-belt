@@ -34,3 +34,5 @@ echo COMPOSE_PROJECT_NAME="gitlab-instance" >> /etc/environment
 cp /tmp/docker-compose.yml .
 
 sudo docker compose up -d
+sudo docker compose up -d
+sudo docker ps -a 
