@@ -115,7 +115,9 @@ resource "google_compute_instance" "default" {
   provisioner "remote-exec" {
     inline = [
       "export GITLAB_HOME=/srv/gitlab",
-      "export COMPOSE_PROJECT_NAME=gitlab-instance"
+      "export COMPOSE_PROJECT_NAME=gitlab-instance",
+      "cp /tmp/docker-compose.yml .",
+      "sudo docker compose up -d"
     ]
   }
 

@@ -25,7 +25,3 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plu
 
 # echo GITLAB_HOME=/srv/gitlab >> /etc/profile
 # echo COMPOSE_PROJECT_NAME="gitlab-instance" >> /etc/profile
-
-cp /tmp/docker-compose.yml .
-
-sudo docker compose up -d
