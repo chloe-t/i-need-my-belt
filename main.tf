@@ -39,7 +39,7 @@ resource "google_project_iam_member" "project" {
 }
 
 resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
-  name        = "policy"
+  name        = "gitlab-instance-schedule"
   description = "Start and stop gitlab instance automatically"
 
   instance_schedule_policy {
