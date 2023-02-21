@@ -20,20 +20,6 @@ terraform {
 data "google_client_openid_userinfo" "terraform_service_account" {
 }
 
-resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
-  name        = "policy"
-  description = "Start and stop gitlab instance automatically"
-  instance_schedule_policy {
-    vm_start_schedule {
-      schedule = "45 7 * * 1-5"
-    }
-    vm_stop_schedule {
-      schedule = "30 18 * * 0-6"
-    }
-    time_zone = "Europe/Paris"
-  }
-}
-
 resource "tls_private_key" "ephemeral" {
   rsa_bits  = 2048
   algorithm = "RSA"
@@ -50,6 +36,25 @@ resource "google_project_iam_member" "project" {
   project = "i-need-my-belt"
   role    = "roles/compute.osAdminLogin"
   member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
+}
+
+resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
+  name        = "policy"
+  description = "Start and stop gitlab instance automatically"
+
+  service_account {
+    email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+    scopes = ["cloud-platform"]
+  }
+  instance_schedule_policy {
+    vm_start_schedule {
+      schedule = "45 7 * * 1-5"
+    }
+    vm_stop_schedule {
+      schedule = "30 18 * * 0-6"
+    }
+    time_zone = "Europe/Paris"
+  }
 }
 
 resource "google_compute_address" "static_ip" {
