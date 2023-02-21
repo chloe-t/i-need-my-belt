@@ -49,7 +49,7 @@ jobs:
     - name: Terraform Plan
       env:
         TF_VAR_GOOGLE_APPLICATION_CREDENTIALS: ${{secrets.GCP_SA_KEY}}
-      run: terraform plan -input=false
+      run: terraform plan -input=false -destroy
 
 
       # On push to "master", build or change infrastructure according to Terraform configuration files
@@ -58,7 +58,7 @@ jobs:
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push'
       env:
         TF_VAR_GOOGLE_APPLICATION_CREDENTIALS: ${{secrets.GCP_SA_KEY}}
-      run: terraform apply -auto-approve -input=false
+      run: terraform apply -auto-approve -input=false -destroy
 
 
     # - name: Set up Cloud SDK
