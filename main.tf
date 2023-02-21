@@ -113,17 +113,3 @@ resource "google_compute_instance" "default" {
 
   metadata_startup_script = file("./install_docker.sh")
 }
-
-# resource "null_resource" "compute_engine_schedule" {
-#   connection {
-#     type        = "ssh"
-#     user        = local.ssh_user_name # gcp user
-#     host        = google_compute_address.static_ip.address
-#     timeout     = "500s"
-#     private_key = local.ssh_private_key
-#   }
-
-#   provisioner "local-exec" {
-#     command = "bash gcloud-schedule.sh"
-#   }
-# }
