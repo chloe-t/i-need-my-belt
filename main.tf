@@ -83,7 +83,7 @@ resource "google_compute_firewall" "default" {
     ports    = ["80", "8080", "22", "1000-2000"]
   }
 
-  source_tags   = ["web"]
+  # source_tags   = ["web"]
   source_ranges = ["0.0.0.0/0"]
 }
 
@@ -95,6 +95,8 @@ resource "google_compute_instance" "default" {
   resource_policies = [
     google_compute_resource_policy.gitlab-instance-scheduler.id
   ]
+
+  tags = ["http-server", "https-server"]
 
   boot_disk {
     initialize_params {
