@@ -42,10 +42,6 @@ resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
   name        = "policy"
   description = "Start and stop gitlab instance automatically"
 
-  service_account {
-    email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
-    scopes = ["cloud-platform"]
-  }
   instance_schedule_policy {
     vm_start_schedule {
       schedule = "45 7 * * 1-5"
