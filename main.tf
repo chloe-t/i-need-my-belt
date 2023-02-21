@@ -155,7 +155,7 @@ resource "google_compute_instance" "default" {
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.default.name
     access_config {
       nat_ip = google_compute_address.static_ip.address
     }
