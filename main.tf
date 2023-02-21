@@ -135,7 +135,7 @@ resource "google_compute_firewall" "default" {
     ports    = ["80", "8080", "22", "1000-2000"]
   }
 
-  #source_tags   = ["web"]
+  source_tags   = ["web"]
   source_ranges = ["0.0.0.0/0"]
 }
 
