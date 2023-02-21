@@ -17,8 +17,8 @@ terraform {
   }
 }
 
-data "google_client_openid_userinfo" "terraform_service_account" {
-}
+# data "google_client_openid_userinfo" "terraform_service_account" {
+# }
 
 resource "tls_private_key" "ephemeral" {
   rsa_bits  = 2048
@@ -33,11 +33,11 @@ locals {
   project_name                 = "i-need-my-belt"
 }
 
-resource "google_project_iam_member" "project" {
-  project = local.project_name
-  role    = "roles/compute.osAdminLogin"
-  member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
-}
+# resource "google_project_iam_member" "project" {
+#   project = local.project_name
+#   role    = "roles/compute.osAdminLogin"
+#   member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
+# }
 
 resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
   name        = "gitlab-instance-schedule"
@@ -135,7 +135,7 @@ resource "google_compute_firewall" "default" {
     ports    = ["80", "8080", "22", "1000-2000"]
   }
 
-  source_tags   = ["web"]
+  #source_tags   = ["web"]
   source_ranges = ["0.0.0.0/0"]
 }
 
@@ -161,10 +161,10 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  service_account {
-    email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
-    scopes = ["cloud-platform"]
-  }
+  # service_account {
+  #   email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+  #   scopes = ["cloud-platform"]
+  # }
 
   tags = [
     "${local.project_name}-firewall-ssh",
