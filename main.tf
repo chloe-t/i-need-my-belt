@@ -17,8 +17,8 @@ terraform {
   }
 }
 
-data "google_client_openid_userinfo" "terraform_service_account" {
-}
+# data "google_client_openid_userinfo" "terraform_service_account" {
+# }
 
 resource "tls_private_key" "ephemeral" {
   rsa_bits  = 2048
@@ -30,13 +30,14 @@ locals {
   ssh_pub_key                  = tls_private_key.ephemeral.public_key_openssh
   ssh_pub_key_without_new_line = replace(local.ssh_pub_key, "\n", "")
   ssh_user_name                = "chloe_trouilh"
+  project_name                 = "i-need-my-belt"
 }
 
-resource "google_project_iam_member" "project" {
-  project = "i-need-my-belt"
-  role    = "roles/compute.osAdminLogin"
-  member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
-}
+# resource "google_project_iam_member" "project" {
+#   project = local.project_name
+#   role    = "roles/compute.osAdminLogin"
+#   member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
+# }
 
 resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
   name        = "gitlab-instance-schedule"
@@ -65,6 +66,57 @@ resource "google_compute_network" "default" {
   name = "test-network"
 }
 
+# resource "google_compute_firewall" "ssh" {
+#   name    = "${local.project_name}-firewall-ssh"
+#   network = google_compute_network.default.name
+
+#   allow {
+#     protocol = "tcp"
+#     ports    = ["22"]
+#   }
+
+#   target_tags   = ["${local.project_name}-firewall-ssh"]
+#   source_ranges = ["0.0.0.0/0"]
+# }
+
+# resource "google_compute_firewall" "http" {
+#   name    = "${local.project_name}-firewall-http"
+#   network = google_compute_network.default.name
+
+#   allow {
+#     protocol = "tcp"
+#     ports    = ["80"]
+#   }
+
+#   target_tags   = ["${local.project_name}-firewall-http"]
+#   source_ranges = ["0.0.0.0/0"]
+# }
+
+# resource "google_compute_firewall" "https" {
+#   name    = "${local.project_name}-firewall-https"
+#   network = google_compute_network.default.name
+
+#   allow {
+#     protocol = "tcp"
+#     ports    = ["443"]
+#   }
+
+#   target_tags   = ["${local.project_name}-firewall-https"]
+#   source_ranges = ["0.0.0.0/0"]
+# }
+
+# resource "google_compute_firewall" "icmp" {
+#   name    = "${local.project_name}-firewall-icmp"
+#   network = google_compute_network.default.name
+
+#   allow {
+#     protocol = "icmp"
+#   }
+
+#   target_tags   = ["${local.project_name}-firewall-icmp"]
+#   source_ranges = ["0.0.0.0/0"]
+# }
+
 resource "google_compute_firewall" "default" {
   name    = "test-firewall"
   network = google_compute_network.default.name
@@ -88,7 +140,7 @@ resource "google_compute_firewall" "default" {
 }
 
 resource "google_compute_instance" "default" {
-  name         = "i-need-my-belt-gitlab-instance"
+  name         = "${local.project_name}-gitlab-instance"
   machine_type = "e2-micro"
   zone         = "us-west1-a"
 
@@ -111,13 +163,14 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  service_account {
-    email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
-    scopes = ["cloud-platform"]
-  }
+  # service_account {
+  #   email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+  #   scopes = ["cloud-platform"]
+  # }
 
   metadata = {
     ssh-keys = "${local.ssh_user_name}:${local.ssh_pub_key_without_new_line} ${local.ssh_user_name}"
+    hostname = "gitlab.${local.project_name}.com"
   }
 
   provisioner "file" {
