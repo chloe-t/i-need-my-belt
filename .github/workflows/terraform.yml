@@ -2,7 +2,8 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "master", "test/terraform" ]
+    branches: 
+      - '**'
   pull_request:
 
 permissions:
