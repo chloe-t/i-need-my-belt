@@ -32,23 +32,23 @@ jobs:
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -destroy
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
-      run: terraform fmt -check -list=true
+      run: terraform fmt -check -list=true -destroy
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       env:
         TF_VAR_GOOGLE_APPLICATION_CREDENTIALS: ${{secrets.GCP_SA_KEY}}
-      run: terraform plan -input=false
+      run: terraform plan -input=false -destroy
 
 
       # On push to "master", build or change infrastructure according to Terraform configuration files
@@ -57,4 +57,4 @@ jobs:
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push'
       env:
         TF_VAR_GOOGLE_APPLICATION_CREDENTIALS: ${{secrets.GCP_SA_KEY}}
-      run: terraform apply -auto-approve -input=false
+      run: terraform apply -auto-approve -input=false -destroy
