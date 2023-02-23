@@ -127,19 +127,6 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "echo ${self.network_interface.0.access_config.0.nat_ip} >> /etc/sshguard/whitelist"
-    ]
-    connection {
-      type        = "ssh"
-      user        = local.ssh_user_name # gcp user
-      host        = self.network_interface.0.access_config.0.nat_ip
-      timeout     = "500s"
-      private_key = local.ssh_private_key
-    }
-  }
-
   metadata_startup_script = file("./install_docker.sh")
 }
 
