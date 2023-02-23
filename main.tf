@@ -85,7 +85,7 @@ resource "google_compute_instance" "default" {
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-minimal-2004-focal-arm64-v20230216"
+      image = "ubuntu-2204-jammy-v20230214"
     }
   }
 
