@@ -102,10 +102,7 @@ resource "google_compute_instance" "default" {
   }
 
   tags = [
-    "${local.project_name}-firewall-ssh",
-    "${local.project_name}-firewall-http",
-    "${local.project_name}-firewall-https",
-    "${local.project_name}-firewall-icmp",
+    "web",
     "http-server",
     "https-server"
   ]
