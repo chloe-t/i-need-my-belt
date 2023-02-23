@@ -67,7 +67,7 @@ resource "google_compute_firewall" "gitlab-network-firewall" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "8080", "22", "1000-2000"]
+    ports    = ["80", "8080", "1000-2000", "8929"]
   }
 
   source_tags   = ["web"]
@@ -118,6 +118,19 @@ resource "google_compute_instance" "default" {
   provisioner "file" {
     source      = "./docker-compose.yml"
     destination = "/tmp/docker-compose.yml"
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user_name # gcp user
+      host        = self.network_interface.0.access_config.0.nat_ip
+      timeout     = "500s"
+      private_key = local.ssh_private_key
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "echo ${self.network_interface.0.access_config.0.nat_ip} >> /etc/sshguard/whitelist"
+    ]
     connection {
       type        = "ssh"
       user        = local.ssh_user_name # gcp user
