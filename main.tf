@@ -112,17 +112,17 @@ resource "google_compute_instance" "default" {
     hostname = "gitlab.${local.project_name}.com"
   }
 
-  provisioner "file" {
-    source      = "./docker-compose.yml"
-    destination = "/tmp/docker-compose.yml"
-    connection {
-      type        = "ssh"
-      user        = local.ssh_user_name # gcp user
-      host        = self.network_interface.0.access_config.0.nat_ip
-      timeout     = "500s"
-      private_key = local.ssh_private_key
-    }
-  }
+  # provisioner "file" {
+  #   source      = "./docker-compose.yml"
+  #   destination = "/tmp/docker-compose.yml"
+  #   connection {
+  #     type        = "ssh"
+  #     user        = local.ssh_user_name # gcp user
+  #     host        = self.network_interface.0.access_config.0.nat_ip
+  #     timeout     = "500s"
+  #     private_key = local.ssh_private_key
+  #   }
+  # }
 
   metadata_startup_script = file("./install_docker.sh")
 }

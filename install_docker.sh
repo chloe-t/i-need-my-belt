@@ -5,29 +5,9 @@
 # Update the apt package index and install packages to allow apt to use a repository over HTTPS:
 
 sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg lsb-release
+sudo apt-get install ca-certificates curl gnupg lsb-release openssh-server perl
 
-# Add Docker's official GPG key
+# Add the Gitlab package repository and install the package
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | sudo bash
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-# Use the following command to set up the repository
-
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Update the apt package index, and install the latest version of Docker Engine and containerd
-
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin # <- uncomment to install additional tools
-
-echo GITLAB_HOME=/srv/gitlab >> /etc/environment
-
-echo COMPOSE_PROJECT_NAME="gitlab-instance" >> /etc/environment
-
-cp /tmp/docker-compose.yml .
-
-sudo docker compose up -d
-sudo docker ps -a 
+sudo EXTERNAL_URL="http://gitlab.i-need-my-belt.com" apt-get install gitlab-ee
