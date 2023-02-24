@@ -76,7 +76,7 @@ resource "google_compute_firewall" "gitlab-network-firewall" {
 
 resource "google_compute_instance" "default" {
   name         = "${local.project_name}-gitlab-instance"
-  machine_type = "e2-micro"
+  machine_type = "e2-medium"
   zone         = "us-west1-a"
 
   resource_policies = [
@@ -94,6 +94,10 @@ resource "google_compute_instance" "default" {
     access_config {
       # nat_ip = google_compute_address.static_ip.address
     }
+  }
+
+  scheduling {
+    preemptible = true
   }
 
   service_account {
