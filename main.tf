@@ -98,6 +98,7 @@ resource "google_compute_instance" "default" {
 
   scheduling {
     preemptible = true
+    automatic_restart = false
   }
 
   service_account {
