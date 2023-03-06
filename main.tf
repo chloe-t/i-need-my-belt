@@ -33,20 +33,20 @@ locals {
   project_name                 = "i-need-my-belt"
 }
 
-resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
-  name        = "gitlab-instance-schedule"
-  description = "Start and stop gitlab instance automatically"
+# resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
+#   name        = "gitlab-instance-schedule"
+#   description = "Start and stop gitlab instance automatically"
 
-  instance_schedule_policy {
-    vm_start_schedule {
-      schedule = "45 7 * * 1-5"
-    }
-    vm_stop_schedule {
-      schedule = "30 18 * * 0-6"
-    }
-    time_zone = "Europe/Paris"
-  }
-}
+#   instance_schedule_policy {
+#     vm_start_schedule {
+#       schedule = "45 7 * * 1-5"
+#     }
+#     vm_stop_schedule {
+#       schedule = "30 18 * * 0-6"
+#     }
+#     time_zone = "Europe/Paris"
+#   }
+# }
 
 resource "google_compute_network" "gitlab-network" {
   name = "gitlab-network"
@@ -74,8 +74,8 @@ resource "google_compute_firewall" "gitlab-network-firewall" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-resource "google_compute_instance" "default" {
-  name         = "${local.project_name}-gitlab-instance"
+resource "google_compute_instance" "gitlab_compute_instance" {
+  name         = "${local.project_name}-gitlab-instance-testDone"
   machine_type = "e2-medium"
   zone         = "us-west1-a"
 
@@ -114,21 +114,9 @@ resource "google_compute_instance" "default" {
 
   metadata = {
     ssh-keys = "${local.ssh_user_name}:${local.ssh_pub_key_without_new_line} ${local.ssh_user_name}"
-    hostname = "gitlab.${local.project_name}.com"
+    hostname = "gitlab.test-${local.project_name}.com"
   }
 
-  # provisioner "file" {
-  #   source      = "./docker-compose.yml"
-  #   destination = "/tmp/docker-compose.yml"
-  #   connection {
-  #     type        = "ssh"
-  #     user        = local.ssh_user_name # gcp user
-  #     host        = self.network_interface.0.access_config.0.nat_ip
-  #     timeout     = "500s"
-  #     private_key = local.ssh_private_key
-  #   }
-  # }
-
-  metadata_startup_script = file("./install_docker.sh")
+  metadata_startup_script = file("./install_gitlab.sh")
 }
 

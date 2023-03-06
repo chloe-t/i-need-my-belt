@@ -1,19 +1,16 @@
-# WHAT AM I DOING? 
+# Objectives
 
-## Gitlab on prem instance
-As my supre mentor asked me to do, I should ask a VM to deploy it. 
-Buuuuuut, I am rather interested into using Google Cloud to do since I don't have much occasions to use it.
+The purpose of this repo is to centralize an automatic deployment of a Gitlab instance on gCloud.
 
-1 - GCP VM Creation
-
-2 - Git installation 
-
-3 - Docker install
-
-4 - Docker-compose install 
+## Ressources deployed
+- An e2.medium instance on gCloud
+- Firewall rules linked to this instance
+- An instance scheduler (to automatically start and stop the instance)
 
 
-
-## Single repo? 
-Because why not? 
+## Tools
+To achieve this, tools used are: 
+- Github Actions
+- Terraform 
+- gCloud
 
