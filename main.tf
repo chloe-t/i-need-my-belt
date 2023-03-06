@@ -79,9 +79,9 @@ resource "google_compute_instance" "gitlab_compute_instance" {
   machine_type = "e2-medium"
   zone         = "us-west1-a"
 
-  resource_policies = [
-    google_compute_resource_policy.gitlab-instance-scheduler.id
-  ]
+  # resource_policies = [
+  #   google_compute_resource_policy.gitlab-instance-scheduler.id
+  # ]
 
   boot_disk {
     initialize_params {
@@ -92,7 +92,7 @@ resource "google_compute_instance" "gitlab_compute_instance" {
   network_interface {
     network = google_compute_network.gitlab-network.name
     access_config {
-      # nat_ip = google_compute_address.static_ip.address
+      # nat_ip = google_compute_address.static_ip.address # Remove static ip since it's more expensive $$ 
     }
   }
 
