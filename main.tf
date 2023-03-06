@@ -33,20 +33,20 @@ locals {
   project_name                 = "i-need-my-belt"
 }
 
-# resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
-#   name        = "gitlab-instance-schedule"
-#   description = "Start and stop gitlab instance automatically"
+resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
+  name        = "gitlab-instance-schedule"
+  description = "Start and stop gitlab instance automatically"
 
-#   instance_schedule_policy {
-#     vm_start_schedule {
-#       schedule = "45 7 * * 1-5"
-#     }
-#     vm_stop_schedule {
-#       schedule = "30 18 * * 0-6"
-#     }
-#     time_zone = "Europe/Paris"
-#   }
-# }
+  instance_schedule_policy {
+    vm_start_schedule {
+      schedule = "45 7 * * 1-5"
+    }
+    vm_stop_schedule {
+      schedule = "30 18 * * 0-6"
+    }
+    time_zone = "Europe/Paris"
+  }
+}
 
 resource "google_compute_network" "gitlab-network" {
   name = "gitlab-network"
@@ -75,13 +75,55 @@ resource "google_compute_firewall" "gitlab-network-firewall" {
 }
 
 resource "google_compute_instance" "gitlab_compute_instance" {
-  name         = "${local.project_name}-gitlab-instance-testDone"
+  name         = "${local.project_name}-gitlab-instance"
   machine_type = "e2-medium"
   zone         = "us-west1-a"
 
-  # resource_policies = [
-  #   google_compute_resource_policy.gitlab-instance-scheduler.id
-  # ]
+  resource_policies = [
+    google_compute_resource_policy.gitlab-instance-scheduler.id
+  ]
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-2204-jammy-v20230214"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.gitlab-network.name
+    access_config {
+      # nat_ip = google_compute_address.static_ip.address # Remove static ip since it's more expensive $$ 
+    }
+  }
+
+  scheduling {
+    preemptible       = true
+    automatic_restart = false
+  }
+
+  service_account {
+    email  = data.google_client_openid_userinfo.terraform_service_account.email # "github-actions-service-account@i-need-my-belt.iam.gserviceaccount.com"
+    scopes = ["cloud-platform"]
+  }
+
+  tags = [
+    "web",
+    "http-server",
+    "https-server"
+  ]
+
+  metadata = {
+    ssh-keys = "${local.ssh_user_name}:${local.ssh_pub_key_without_new_line} ${local.ssh_user_name}"
+    hostname = "gitlab.${local.project_name}.com"
+  }
+
+  metadata_startup_script = file("./install_gitlab.sh")
+}
+
+resource "google_compute_instance" "gitlab_compute_instance" {
+  name         = "${local.project_name}-gitlab-instance-test-done"
+  machine_type = "e2-medium"
+  zone         = "us-west1-a"
 
   boot_disk {
     initialize_params {
@@ -117,6 +159,11 @@ resource "google_compute_instance" "gitlab_compute_instance" {
     hostname = "gitlab.test-${local.project_name}.com"
   }
 
-  metadata_startup_script = file("./install_gitlab.sh")
+  metadata_startup_script = <<SCRIPT
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl gnupg lsb-release openssh-server perl tzdata
+    curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | sudo bash
+    sudo EXTERNAL_URL="http://gitlab.test-i-need-my-belt.com" apt-get install gitlab-ee
+    SCRIPT
 }
 
