@@ -120,7 +120,7 @@ resource "google_compute_instance" "gitlab_compute_instance" {
   metadata_startup_script = file("./install_gitlab.sh")
 }
 
-resource "google_compute_instance" "gitlab_compute_instance" {
+resource "google_compute_instance" "gitlab_compute_instance_test" {
   name         = "${local.project_name}-gitlab-instance-test-done"
   machine_type = "e2-medium"
   zone         = "us-west1-a"
