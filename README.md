@@ -11,6 +11,9 @@ The purpose of this repo is to centralize an automatic deployment of a Gitlab in
 ## Tools
 To achieve this, tools used are: 
 - Github Actions
-- Terraform 
+- Terraform
 - gCloud
 
+All is organized as displayed:
+
+![Archi schema](/assets/i-need-my-belt-schema.png)
