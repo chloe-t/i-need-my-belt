@@ -1,4 +1,3 @@
-
 terraform {
   required_providers {
     google = {
@@ -30,29 +29,31 @@ locals {
   ssh_pub_key                  = tls_private_key.ephemeral.public_key_openssh
   ssh_pub_key_without_new_line = replace(local.ssh_pub_key, "\n", "")
   ssh_user_name                = "chloe_trouilh"
+  project_name                 = "i-need-my-belt"
 }
 
-resource "google_project_iam_member" "project" {
-  project = "i-need-my-belt"
-  role    = "roles/compute.osAdminLogin"
-  member  = "serviceAccount:${data.google_client_openid_userinfo.terraform_service_account.email}"
+resource "google_compute_resource_policy" "gitlab-instance-scheduler" {
+  name        = "gitlab-instance-schedule"
+  description = "Start and stop gitlab instance automatically"
+
+  instance_schedule_policy {
+    # vm_start_schedule { #Comment auto-start, not usefull daily
+    #   schedule = "45 7 * * 1-5"
+    # }
+    vm_stop_schedule {
+      schedule = "30 18 * * 0-6"
+    }
+    time_zone = "Europe/Paris"
+  }
 }
 
-resource "google_compute_address" "static_ip" {
-  name = "debian-vm"
+resource "google_compute_network" "gitlab-network" {
+  name = "gitlab-network"
 }
 
-output "static_ip" {
-  value = google_compute_address.static_ip.address
-}
-
-resource "google_compute_network" "default" {
-  name = "test-network"
-}
-
-resource "google_compute_firewall" "default" {
-  name    = "test-firewall"
-  network = google_compute_network.default.name
+resource "google_compute_firewall" "gitlab-network-firewall" {
+  name    = "gitlab-firewall"
+  network = google_compute_network.gitlab-network.name
 
   allow {
     protocol = "icmp"
@@ -65,29 +66,38 @@ resource "google_compute_firewall" "default" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "8080", "22", "1000-2000"]
+    ports    = ["80", "8080", "1000-2000", "8929"]
   }
 
   source_tags   = ["web"]
   source_ranges = ["0.0.0.0/0"]
 }
 
-resource "google_compute_instance" "default" {
-  name         = "i-need-my-belt-gitlab-instance"
-  machine_type = "e2-micro"
+resource "google_compute_instance" "gitlab_compute_instance" {
+  name         = "${local.project_name}-gitlab-instance"
+  machine_type = "e2-medium"
   zone         = "us-west1-a"
+
+  resource_policies = [
+    google_compute_resource_policy.gitlab-instance-scheduler.id
+  ]
 
   boot_disk {
     initialize_params {
-      image = "ubuntu-minimal-2210-kinetic-amd64-v20230126"
+      image = "ubuntu-2204-jammy-v20230214"
     }
   }
 
   network_interface {
-    network = "default"
+    network = google_compute_network.gitlab-network.name
     access_config {
-      nat_ip = google_compute_address.static_ip.address
+      # nat_ip = google_compute_address.static_ip.address # Remove static ip since it's more expensive $$ 
     }
+  }
+
+  scheduling {
+    preemptible       = true
+    automatic_restart = false
   }
 
   service_account {
@@ -95,21 +105,16 @@ resource "google_compute_instance" "default" {
     scopes = ["cloud-platform"]
   }
 
+  tags = [
+    "web",
+    "http-server",
+    "https-server"
+  ]
+
   metadata = {
     ssh-keys = "${local.ssh_user_name}:${local.ssh_pub_key_without_new_line} ${local.ssh_user_name}"
+    hostname = "gitlab.${local.project_name}.com"
   }
 
-  provisioner "file" {
-    source      = "./docker-compose.yml"
-    destination = "/tmp/docker-compose.yml"
-    connection {
-      type        = "ssh"
-      user        = local.ssh_user_name # gcp user
-      host        = google_compute_address.static_ip.address
-      timeout     = "500s"
-      private_key = local.ssh_private_key
-    }
-  }
-
-  metadata_startup_script = file("./install_docker.sh")
+  metadata_startup_script = file("./install_gitlab.sh")
 }
